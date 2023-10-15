@@ -13,12 +13,14 @@ const {
 	MYSQL_USERNAME,
 	MYSQL_PASSWORD,
 	FORCE_DB_UPDATE,
-	NODE_ENV
+	NODE_ENV,
+	SERVER_PORT
 } = process.env;
 
 console.log( 'MYSQL_USERNAME: ' + MYSQL_USERNAME );
 console.log( 'MYSQL_PASSWORD: ' + MYSQL_PASSWORD );
 console.log( 'NODE_ENV: ' + NODE_ENV );
+console.log( 'SERVER_PORT: ' + SERVER_PORT );
 
 const sequelize =
 	process.env.NODE_ENV === "test"

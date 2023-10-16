@@ -1,0 +1,9 @@
+POST http://localhost:8090/intercambios HTTP/1.1
+content-type: application/json
+
+{
+    "descripcion": "Intercambio de prueba 6",
+    "fecha_sorteo": "2023-10-25T01:12:22",
+    "fecha_intercambio": "2023-10-30T01:12:22",
+    "id_estado_intercambio": 1
+}

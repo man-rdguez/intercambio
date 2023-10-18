@@ -13,7 +13,7 @@ const validator = require("../middleware/validator");
 const {
    creaEsquemaIntercambio,
    updateEsquemaIntercambio,
-	paramsEsquema,
+   paramsEsquema,
 } = require("../validation/intercambio");
 
 router.get("/intercambios", getIntercambios);

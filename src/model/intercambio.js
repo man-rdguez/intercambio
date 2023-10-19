@@ -7,12 +7,6 @@ module.exports = sequelize.define("intercambio", {
 		allowNull: false,
 		unique: true,
 	},
-	/*
-	id_estado_intercambio: {
-		type: DataTypes.INTEGER,
-		allowNull: false,
-	},
-	*/
 	fecha_sorteo: {
 		type: DataTypes.DATE,
 		allowNull: false,

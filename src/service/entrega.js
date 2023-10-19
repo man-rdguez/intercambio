@@ -1,6 +1,7 @@
 const Entrega = require("../model/entrega");
 const Participante = require("./participante");
 const express = require("express");
+const { connect, sync } = require("../model/sequelize");
 
 const PENDIENTE = 1;
 
@@ -19,76 +20,95 @@ exports.raffle = function (id_intercambio) {
 
 async function performRaffle( id_intercambio ) {
 
-   const ids = [];
-   const opciones = [];
+   const otorgantes = [];
+   const receptores = [];
 
-let participanteData = [];
-await Participante.findAll(id_intercambio)
-    /* same code with above code block */
-.then((particInsts) => {
-    console.log( particInsts);
-    particInsts.forEach((particInst) => {
-      let particData = particInst.get();
-      console.log(particData);
-      let {id} = particData;
-   ids.push(id);
-   opciones.push(id);
-      return id;
-    });
+   /*******************************************************************************
+   1. We get all the participants for the exchange
+   *******************************************************************************/
+
+   await Participante.findAll( id_intercambio )
+      .then((instances) => {
+
+         instances.forEach( (instance) => {
+            let {id} = instance.get();
+            otorgantes.push(id);
+            receptores.push(id);
+         });
    })
-.then( (result) => {
-   console.log('result = ' + result);
-})
-.catch((error) => {
-    console.log(error);
-});
+   .catch((error) => {
+      console.log(error);
+   });
 
-console.log( '--------------------------------------------------------------------------------' );
-console.log( 'participanteData' + participanteData );
-console.log( '--------------------------------------------------------------------------------' );
 
-   console.log( 'ids: ' + ids );
-   console.log( 'opciones: ' + opciones );
+   /*******************************************************************************
+   2. We perform the raffle and keep the results in an array
+   *******************************************************************************/
 
-   for ( id_otorgante of ids ) {
-      console.log('opciones before' + opciones);
-      let length = opciones.length;
-      console.log('length: ' + length );
-      let choice = -1;
+   let id_otorgante = 0;
+   let id_receptor = 0;
+   let parEntregas =[];
+
+   for ( id_otorgante of otorgantes ) {
 
       let index = 0
 
-      let id_receptor = 0;
       do {
-          index = ramdomNumber(length);
-          console.log('index:' + index );
-          id_receptor = opciones[ index];
-          console.log('opciones' + opciones);
-      } while ( id_otorgante == id_receptor && index >= 0 )
+          index = randomNumber(receptores.length);
+          id_receptor = receptores[index];
+      } while ( id_otorgante == id_receptor && receptores.length > 1 )
       
-      const entrega = Entrega.create( {id_intercambio, id_otorgante, id_receptor, id_estado_entrega : PENDIENTE } );
-
-      opciones.splice(index, 1);
-      console.log('opciones after' + opciones);
+      if ( id_otorgante != id_receptor ) {
+         parEntregas.push( { id_otorgante: id_otorgante, id_receptor: id_receptor} );
+         receptores.splice(index, 1);
+      }
 
    }
+
+   // In case that the last participant has himself as his receptor, we exchange receptor with the last registered participant
+   if ( id_otorgante == id_receptor ) {
+      let id_receptor_temp = parEntregas[parEntregas.length - 1].id_receptor;
+      parEntregas[parEntregas.length - 1].id_receptor = id_receptor;
+      parEntregas.push( { id_otorgante: id_otorgante, id_receptor: id_receptor_temp} );
+      receptores.splice(index, 1);
+   }
+
+   /*******************************************************************************
+   3. Once we have all the giver-receiver pairs, we proceed to record them in DB
+   *******************************************************************************/
+
+   deleteByIntercambio(id_intercambio);
+   await sync;
+
+   for ( parEntrega of parEntregas ) {
+      Entrega.create({
+         id_intercambio,
+         id_otorgante: parEntrega.id_otorgante,
+         id_receptor: parEntrega.id_receptor,
+         id_estado_entrega : PENDIENTE
+      });
+   }
+
+   await sync;
 
    return findByIntercambio(id_intercambio);
 }
 
-function ramdomNumber( length ) {
-   aleatorio = Math.round(Math.random() * length );
-
-   console.log( 'length: ' + length );
-   console.log( 'aleatorio: ' + aleatorio );
-
-   return aleatorio
+function randomNumber( length ) {
+   return Math.floor(Math.random() * length );
 }
 
-//exports.findByIntercambio = function (id_intercambio) {
-function findByIntercambio(id_intercambio) {
+function findByIntercambio( id_intercambio ) {
 	// SELECT * FROM intercambio WHERE id_intercambio = '...';
 	return Entrega.findAll({
+		where: {
+			id_intercambio,
+		},
+	});
+};
+
+async function deleteByIntercambio( id_intercambio ) {
+	await Entrega.destroy({
 		where: {
 			id_intercambio,
 		},

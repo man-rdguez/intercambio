@@ -9,16 +9,10 @@ const {
 const ROL_PARTICIPANTE = 1;
 const ROL_ORGANIZADOR  = 2;
 
-//const insert_participante = require("../service/participante.insert");
-
 exports.creaIntercambio = async function (request, response) {
    console.log(request.body);
 	const {descripcion, fecha_sorteo, fecha_intercambio, id_estado_intercambio} = request.body;
 	const intercambio = await insert({ descripcion, fecha_sorteo, fecha_intercambio, id_estado_intercambio});
-   //const participante = await insert_participante({ id_usuario: request.id_usuario, id_intercambio: intercambio.id});
-   //const rol_participante = await insert_rol_participante({ id_participante: participante.id, id_rol: ROL_PARTICIPANTE });
-   //const rol_participante = await insert_rol_participante({ id_participante: participante.id, id_rol: ROL_ORGANIZADOR });
-
 	response.status(201).json(intercambio);
 };
 

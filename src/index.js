@@ -12,6 +12,7 @@ const routerUsuario = require("./router/usuario");
 const routerIntercambio = require("./router/intercambio");
 const routerParticipante = require("./router/participante");
 const routerEntrega = require("./router/entrega");
+const routerAuth = require("./router/auth");
 
 const validationError = require("./middleware/validation-error");
 const unknownError = require("./middleware/unknown-error");
@@ -21,6 +22,7 @@ app.use(routerUsuario);
 app.use(routerIntercambio);
 app.use(routerParticipante);
 app.use(routerEntrega);
+app.use(routerAuth);
 
 // Manejo de errores
 app.use(validationError);

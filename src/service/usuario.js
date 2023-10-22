@@ -4,7 +4,7 @@ exports.insert = function (data) {
 	return Usuario.create(data);
 };
 
-exports.findByUsuario = function (nombre_usuario) {
+exports.findByNombre_Usuario = function (nombre_usuario) {
 	// SELECT * FROM usuario WHERE usuario = '...';
 	return Usuario.findOne({
 		where: {

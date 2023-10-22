@@ -5,6 +5,7 @@ const {
 	performRaffle,
 } = require("../controller/entrega");
 const validator = require("../middleware/validator");
+const jwtValidator = require("../middleware/jwt");
 
 const {
    creaEsquemaEntrega,
@@ -14,6 +15,6 @@ const {
 
 router.get("/intercambios/entregas/:id_otorgante", validator.params(paramsEsquema), getEntregaByOtorgante);
 
-router.post("/intercambios/:id_intercambio/entregas/raffles", validator.params(paramsEsquema), performRaffle);
+router.post("/intercambios/:id_intercambio/entregas/raffles", jwtValidator, validator.params(paramsEsquema), performRaffle);
 
 module.exports = router;

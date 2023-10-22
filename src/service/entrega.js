@@ -54,7 +54,7 @@ async function performRaffle( id_intercambio ) {
       let index = 0
 
       do {
-          index = randomNumber(receptores.length);
+          index = randomReceiver(receptores.length);
           id_receptor = receptores[index];
       } while ( id_otorgante == id_receptor && receptores.length > 1 )
       
@@ -94,7 +94,7 @@ async function performRaffle( id_intercambio ) {
    return findByIntercambio(id_intercambio);
 }
 
-function randomNumber( length ) {
+function randomReceiver( length ) {
    return Math.floor(Math.random() * length );
 }
 
